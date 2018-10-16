@@ -23,7 +23,7 @@ RealmStorage.setup(setup, onError)
 - convertFilter (filter: Object | string): string
 - checkSchema (key: string)
 - getAllKeys (): Promise<Array<string>>
-- getModel (): any
+- getModel (): any  
 
 ### Using
 - [Realm-JS 2.18.0](https://github.com/realm/realm-js)

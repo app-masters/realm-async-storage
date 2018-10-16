@@ -1,13 +1,25 @@
 // @flow
 import Realm from 'realm';
-import type { Storage } from './customTypes';
 
-class RealmStorage implements Storage {
+declare class Storage {
+    static setup (schemas: Array<RealmSchema>): any;
+    static createItem (key: string, value: Object): Object;
+    static updateItem (key: string, value: Object): Object;
+    static deleteItem (item: RealmObject): Promise<void>;
+    static getItems (key: string, filter: Object | string): Promise<Array<Object> | null>;
+    static removeAll (key: string): Promise<void>;
+    static convertFilter (filter: Object | string): string;
+    static checkSchema (key: string): void;
+    static getAllKeys (): Promise<Array<string>>;
+    static getModel (): any;
+}
+
+class RealmStorage extends Storage {
     // Statics of Storage Class
     static realm: RealmInstance; // Instance of Realm
     static schemas: Array<RealmSchema>; // Array of defined schemas
     static schemaNames: Array<string>; // Array of name of Schemas
-    static errorCallback: (error: Error) => void; // Callback called on storage uncaught errors
+    static errorCallback: ?(error: Error) => void; // Callback called on storage uncaught errors
 
     /**
      * Setup schemas for Realm, saving a list of names and open a src
@@ -15,7 +27,7 @@ class RealmStorage implements Storage {
      * @param errorCallback
      * @returns {Promise<void>}
      */
-    static setup (schemas: Array<RealmSchema>, errorCallback: (error: Error) => void): RealmInstance {
+    static setup (schemas: Array<RealmSchema>, errorCallback?: (error: Error) => void): RealmInstance {
         // Schemas
         RealmStorage.schemas = schemas;
         RealmStorage.schemaNames = RealmStorage.schemas.map(schema => schema.name);
