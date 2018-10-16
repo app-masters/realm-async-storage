@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-## [0.0.1] - 2018-10-16
+## [0.0.1/0.0.4] - 2018-10-16
 ### Added
 - RealmStorage going to a separated repository
+- Index.js exporting class
+- .npmignore
