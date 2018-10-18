@@ -6,9 +6,9 @@ On the `App.js`, import and give desired model list to setup.
 ````javascript
 import {RealmStorage} from 'realm-async-storage';
 ...
-const schemas = [UserSchema, CompanySchema];
+const schemas = [UserSchema, CompanySchema]; // Realm schemas
 const onError = (error) => console.error(error); // optional
-RealmStorage.setup(setup, onError)
+RealmStorage.setup(schemas, onError)
 
 ````
 

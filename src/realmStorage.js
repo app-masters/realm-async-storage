@@ -1,20 +1,20 @@
 // @flow
 import Realm from 'realm';
 
-declare class Storage {
-    static setup (schemas: Array<RealmSchema>): any;
-    static createItem (key: string, value: Object): Object;
-    static updateItem (key: string, value: Object): Object;
-    static deleteItem (item: RealmObject): Promise<void>;
-    static getItems (key: string, filter: Object | string): Promise<Array<Object> | null>;
-    static removeAll (key: string): Promise<void>;
-    static convertFilter (filter: Object | string): string;
-    static checkSchema (key: string): void;
-    static getAllKeys (): Promise<Array<string>>;
-    static getModel (): any;
+declare interface Storage {
+    setup (schemas: Array<RealmSchema>): any;
+    createItem (key: string, value: Object): Object;
+    updateItem (key: string, value: Object): Object;
+    deleteItem (item: RealmObject): Promise<void>;
+    getItems (key: string, filter: Object | string): Promise<Array<Object> | null>;
+    removeAll (key: string): Promise<void>;
+    convertFilter (filter: Object | string): string;
+    checkSchema (key: string): void;
+    getAllKeys (): Promise<Array<string>>;
+    getModel (): any;
 }
 
-class RealmStorage extends Storage {
+class RealmStorage {
     // Statics of Storage Class
     static realm: RealmInstance; // Instance of Realm
     static schemas: Array<RealmSchema>; // Array of defined schemas
@@ -42,8 +42,6 @@ class RealmStorage extends Storage {
             migration: () => {
             }
         });
-
-        return RealmStorage.realm;
     }
 
     /**
