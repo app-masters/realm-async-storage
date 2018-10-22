@@ -43,6 +43,7 @@ class RealmStorage {
         RealmStorage.schemaNames = RealmStorage.schemas.map(schema => schema.name);
 
         // List the primaryKey of each schema
+        RealmStorage.primaryKeys = {};
         for (const schema of schemas) {
             RealmStorage.primaryKeys[schema.name] = schema.primaryKey;
         }
