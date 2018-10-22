@@ -3,14 +3,23 @@ import Realm from 'realm';
 
 declare interface Storage {
     setup (schemas: Array<RealmSchema>): any;
+
     createItem (key: string, value: Object): Object;
+
     updateItem (key: string, value: Object): Object;
+
     deleteItem (item: RealmObject): Promise<void>;
+
     getItems (key: string, filter: Object | string): Promise<Array<Object> | null>;
+
     removeAll (key: string): Promise<void>;
+
     convertFilter (filter: Object | string): string;
+
     checkSchema (key: string): void;
+
     getAllKeys (): Promise<Array<string>>;
+
     getModel (): any;
 }
 
@@ -20,6 +29,7 @@ class RealmStorage {
     static schemas: Array<RealmSchema>; // Array of defined schemas
     static schemaNames: Array<string>; // Array of name of Schemas
     static errorCallback: ?(error: Error) => void; // Callback called on storage uncaught errors
+    static primaryKeys: { [any]: ?string }; // Callback called on storage uncaught errors
 
     /**
      * Setup schemas for Realm, saving a list of names and open a src
@@ -27,10 +37,15 @@ class RealmStorage {
      * @param errorCallback
      * @returns {Promise<void>}
      */
-    static setup (schemas: Array<RealmSchema>, errorCallback?: (error: Error) => void): RealmInstance {
+    static setup (schemas: Array<RealmSchema>, errorCallback?: (error: Error) => void): void {
         // Schemas
         RealmStorage.schemas = schemas;
         RealmStorage.schemaNames = RealmStorage.schemas.map(schema => schema.name);
+
+        // List the primaryKey of each schema
+        for (const schema of schemas) {
+            RealmStorage.primaryKeys[schema.name] = schema.primaryKey;
+        }
 
         // Define callback called on errors
         RealmStorage.errorCallback = errorCallback;
@@ -79,10 +94,18 @@ class RealmStorage {
             RealmStorage.checkSchema(key);
 
             // Updating register on src
-            let item = null;
+            let item = [];
             RealmStorage.realm.write(() => {
                 const updating = true;
                 item = RealmStorage.realm.create(key, value, updating);
+                for (const property of item) {
+                    // Don't update primaryKey
+                    if (property === RealmStorage.primaryKeys[key]) {
+                        continue;
+                    }
+                    // Set new values
+                    item[property] = value[property];
+                }
             });
             return item;
         } catch (error) {
