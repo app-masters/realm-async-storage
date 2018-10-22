@@ -99,14 +99,6 @@ class RealmStorage {
             RealmStorage.realm.write(() => {
                 const updating = true;
                 item = RealmStorage.realm.create(key, value, updating);
-                for (const property of item) {
-                    // Don't update primaryKey
-                    if (property === RealmStorage.primaryKeys[key]) {
-                        continue;
-                    }
-                    // Set new values
-                    item[property] = value[property];
-                }
             });
             return item;
         } catch (error) {
