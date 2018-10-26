@@ -3,23 +3,14 @@ import Realm from 'realm';
 
 declare interface Storage {
     setup (schemas: Array<RealmSchema>): any;
-
     createItem (key: string, value: Object): Object;
-
     updateItem (key: string, value: Object): Object;
-
     deleteItem (item: RealmObject): Promise<void>;
-
     getItems (key: string, filter: Object | string): Promise<Array<Object> | null>;
-
     removeAll (key: string): Promise<void>;
-
     convertFilter (filter: Object | string): string;
-
     checkSchema (key: string): void;
-
     getAllKeys (): Promise<Array<string>>;
-
     getModel (): any;
 }
 
@@ -34,10 +25,12 @@ class RealmStorage {
     /**
      * Setup schemas for Realm, saving a list of names and open a src
      * @param schemas
+     * @param version
+     * @param migration
      * @param errorCallback
      * @returns {Promise<void>}
      */
-    static setup (schemas: Array<RealmSchema>, errorCallback?: (error: Error) => void): void {
+    static setup (schemas: Array<RealmSchema>, version: number, migration: Function, errorCallback?: (error: Error) => void): void {
         // Schemas
         RealmStorage.schemas = schemas;
         RealmStorage.schemaNames = RealmStorage.schemas.map(schema => schema.name);
@@ -51,12 +44,14 @@ class RealmStorage {
         // Define callback called on errors
         RealmStorage.errorCallback = errorCallback;
 
+        // Empty migration
+        const defaultMigration = () => {};
+
         // Opening a Realm instance
         RealmStorage.realm = new Realm({
             schema: RealmStorage.schemas,
-            schemaVersion: new Date().getTime(),
-            migration: () => {
-            }
+            schemaVersion: version || 1,
+            migration: migration || defaultMigration
         });
     }
 
